@@ -100,7 +100,7 @@ def calc_pkas_from_seq(seq=None, T=293.15, Ion=0.1):
 
   #perform iterative fitting.........................
   for icycle in range(ncycles):
-    ##print((icycle))
+    ##print(icycle)
 
     if icycle == 0:
       fractionhold = np.array([[fun(pHs[p], pK0s[i], nH0s[i]) for i in range(N)] for p in range(len(pHs))])
@@ -128,11 +128,11 @@ def calc_pkas_from_seq(seq=None, T=293.15, Ion=0.1):
       titration[ires-1] = E_sel/E_all
     sol=np.array([curve_fit(fun, pHs, titration[p], [pK0s[p], nH0s[p]],ftol=0.0001,maxfev=2000)[0] for p in range(len(pK0s))])
     (pKs, nHs) = sol.transpose()
-    ##print((sol))
+    ##print(sol)
 
   dct={}
   for p,i in enumerate(pos):
-    ##print((p,i,seq[i],pKs[p],nHs[p]))
+    ##print(p,i,seq[i],pKs[p],nHs[p])
     dct[i-1]=(pKs[p],nHs[p],seq[i])
 
   return dct
@@ -176,10 +176,10 @@ def initcorcents():
       aai=vals[0]
       dct[aai]={}
       for j in range(7):
-	atnj=aas[j]
-	dct[aai][atnj]=eval(vals[1+j])
+        atnj=aas[j]
+        dct[aai][atnj]=eval(vals[1+j])
     return dct
-	
+        
 
 tablenei='''C A  0.06131 -0.04544  0.14646  0.01305
  C C  0.04502  0.12592 -0.03407 -0.02654
@@ -355,7 +355,7 @@ def initcorneis():
       if term=='n':  dct['n'][atn]=[None,None,None,eval(vals[-1])]
       elif term=='c':dct['c'][atn]=[eval(vals[-1]),None,None,None]
     return dct
-	
+        
 
 tabletempk='''aa  CA   CB   C     N    H    HA
 A  -2.2  4.7 -7.1  -5.3 -9.0  0.7
@@ -389,7 +389,7 @@ def gettempkoeff():
   for lin in buf[1:]:
     aa=lin[0]
     for j,atn in enumerate(headers):
-	dct[atn][aa]=eval(lin[1+j])
+        dct[atn][aa]=eval(lin[1+j])
   return dct
 
 tablecombdevs='''C -1 G r xrGxx  0.2742  1.4856
@@ -747,7 +747,7 @@ def initcorrcomb():
       segment=lin[4]
       dct[atn][segment]=key,eval(lin[-2])
     return dct
-	
+        
 TEMPCORRS=gettempkoeff()
 ##dct[atn][aa]=eval(lin[1+j])
 CENTSHIFTS=initcorcents()
@@ -762,32 +762,32 @@ def predPentShift(pent,atn):
     sh=CENTSHIFTS[aac][atn]
     allneipos=[2,1,-1,-2]
     for i in range(4):
-	aai=pent[2+allneipos[i]]
-	if aai in NEICORRS:
-	  corr=NEICORRS[aai][atn][i]
-	  sh+=corr
+        aai=pent[2+allneipos[i]]
+        if aai in NEICORRS:
+          corr=NEICORRS[aai][atn][i]
+          sh+=corr
     groups=['G','P','FYW','LIVMCA','KR','DE']##,'NQSTHncX']
     labels='GPra+-p' #(Gly,Pro,Arom,Aliph,pos,neg,polar)
     grstr=''
     for i in range(5):
-	aai=pent[i]
-	found=False
-	for j,gr in enumerate(groups):
-	  if aai in gr:
-	    grstr+=labels[j]
-	    found=True
-	    break
-	if not found:grstr+='p'#polar
+        aai=pent[i]
+        found=False
+        for j,gr in enumerate(groups):
+          if aai in gr:
+            grstr+=labels[j]
+            found=True
+            break
+        if not found:grstr+='p'#polar
     centgr=grstr[2]
     for segm in COMBCORRS[atn]:
-	key,combval=COMBCORRS[atn][segm]
+        key,combval=COMBCORRS[atn][segm]
         neipos,centgroup,neigroup=key#(k,l,m)
-	if centgroup==centgr and grstr[2+neipos]==neigroup:
-	 if (centgr,neigroup) != ('p','p') or pent[2] in 'ST':
-	  #pp comb only used when center is Ser or Thr!
-	  sh+=combval
+        if centgroup==centgr and grstr[2+neipos]==neigroup:
+         if (centgr,neigroup) != ('p','p') or pent[2] in 'ST':
+          #pp comb only used when center is Ser or Thr!
+          sh+=combval
     return sh
-	
+        
 def gettempcorr(aai,atn,tempdct,temp):
     return tempdct[atn][aai]/1000*(temp-298)
 
@@ -798,19 +798,19 @@ def get_phshifts():
     na=None
     for lin in buf:
       if len(lin)>3:
-	resn=lin[0]
-	atn=lin[1]
-	sh0=eval(lin[2])
-	sh1=eval(lin[3])
-	shd=eval(lin[4])
-	if not resn in dct:dct[resn]={}
-	dct[resn][atn]=shd
-	if len(lin)>6:#neighbor data
-	  for n in range(2):
-	    shdn=eval(lin[5+n])
-	    nresn=resn+'ps'[n]
-	    if not nresn in dct:dct[nresn]={}
-	    dct[nresn][atn]=shdn
+        resn=lin[0]
+        atn=lin[1]
+        sh0=eval(lin[2])
+        sh1=eval(lin[3])
+        shd=eval(lin[4])
+        if not resn in dct:dct[resn]={}
+        dct[resn][atn]=shd
+        if len(lin)>6:#neighbor data
+          for n in range(2):
+            shdn=eval(lin[5+n])
+            nresn=resn+'ps'[n]
+            if not nresn in dct:dct[nresn]={}
+            dct[nresn][atn]=shdn
     return dct
 
 def initfilcsv(filename):
@@ -822,143 +822,143 @@ def initfilcsv(filename):
   return buffer
 
 def write_csv_pkaoutput(pkadct,seq,temperature,ion):
-	seq=seq[:min(150,len(seq))]
-	name='outpepKalc_%s_T%6.2f_I%4.2f.csv'%(seq,temperature,ion)
-	out=open(name,'w')
-	out.write('Site,pKa value,pKa shift,Hill coefficient\n')
-	for i in pkadct:
-	  pKa,nH,resi=pkadct[i]
-	  reskey=resi+str(i+1)
-	  diff=pKa-pK0[resi]
-	  out.write('%s,%5.3f,%5.3f,%5.3f\n'%(reskey,pKa,diff,nH))
-	out.close()
+        seq=seq[:min(150,len(seq))]
+        name='outpepKalc_%s_T%6.2f_I%4.2f.csv'%(seq,temperature,ion)
+        out=open(name,'w')
+        out.write('Site,pKa value,pKa shift,Hill coefficient\n')
+        for i in pkadct:
+          pKa,nH,resi=pkadct[i]
+          reskey=resi+str(i+1)
+          diff=pKa-pK0[resi]
+          out.write('%s,%5.3f,%5.3f,%5.3f\n'%(reskey,pKa,diff,nH))
+        out.close()
 
 def read_csv_pkaoutput(seq,temperature,ion,name=None):
-	seq=seq[:min(150,len(seq))]
+        seq=seq[:min(150,len(seq))]
         if VERB:print('reading csv',name)
-	if name==None:name='outpepKalc_%s_T%6.2f_I%4.2f.csv'%(seq,temperature,ion)
-	try:out=open(name,'r')
-	except IOError:return None
-	buf=initfilcsv(name)
-	for lnum,data in enumerate(buf):
-	  if len(data)>0 and data[0]=='Site':break
-	pkadct={}
-	for data in buf[lnum+1:]:
-	  reskey,pKa,diff,nH=data
-	  i=int(reskey[1:])-1
-	  resi=reskey[0]
-	  pKaval=eval(pKa)
-	  nHval=eval(nH)
-	  pkadct[i]=pKaval,nHval,resi
-	return pkadct
+        if name==None:name='outpepKalc_%s_T%6.2f_I%4.2f.csv'%(seq,temperature,ion)
+        try:out=open(name,'r')
+        except IOError:return None
+        buf=initfilcsv(name)
+        for lnum,data in enumerate(buf):
+          if len(data)>0 and data[0]=='Site':break
+        pkadct={}
+        for data in buf[lnum+1:]:
+          reskey,pKa,diff,nH=data
+          i=int(reskey[1:])-1
+          resi=reskey[0]
+          pKaval=eval(pKa)
+          nHval=eval(nH)
+          pkadct[i]=pKaval,nHval,resi
+        return pkadct
 
 def getphcorrs(seq,temperature,pH,ion,pkacsvfilename=None):
-	bbatns=['C','CA','CB','HA','H','N','HB']
+        bbatns=['C','CA','CB','HA','H','N','HB']
         dct=get_phshifts()
-	Ion=max(0.0001,ion)
-	pkadct=read_csv_pkaoutput(seq,temperature,ion,pkacsvfilename)
-	if pkadct==None:
-	  pkadct=calc_pkas_from_seq('n'+seq+'c',temperature,Ion)
-	  write_csv_pkaoutput(pkadct,seq,temperature,ion)
-	outdct={}
-	for i in pkadct:
-	  if VERB:print('pkares: %6.3f %6.3f %1s'%pkadct[i],i)
-	  pKa,nH,resi=pkadct[i]
-	  frac =fun(pH,pKa,nH)
-	  frac7=fun(7.0,pK0[resi],nH)
-	  if resi in 'nc':jump=0.0#so far
-	  else:
-	   for atn in bbatns:
-	    if not atn in outdct:outdct[atn]={}
-	    if VERB:print('data:',atn,pKa,nH,resi,i,atn,pH)
-	    dctresi=dct[resi]
-	    try:
-		delta=dctresi[atn]
-		jump =frac *delta
-		jump7=frac7*delta
-		key=(resi,atn)
-	    except KeyError:
-	        ##if not (resi in 'RKCY' and atn=='H') and not (resi == 'R' and atn=='N'):
-		print('warning no key:',resi,i,atn)
-		delta=999;jump=999;jump7=999
-	    if delta<99:
-	     jumpdelta=jump-jump7
-	     if not i in outdct[atn]:outdct[atn][i]=[resi,jumpdelta]
-	     else:
-		outdct[atn][i][0]=resi
-		outdct[atn][i][1]+=jumpdelta
-	     if VERB:print('%3s %5.2f %6.4f %s %3d %5s %8.5f %8.5f %4.2f'%(atn,pKa,nH,resi,i,atn,jump,jump7,pH))
-	     if resi+'p' in dct and atn in dct[resi+'p']:
-	      for n in range(2):
-	        ni=i+2*n-1
-	        ##if ni is somewhere in seq...
-		nresi=resi+'ps'[n]
-		ndelta=dct[nresi][atn]
-		jump =frac *ndelta
-		jump7=frac7*ndelta
-		jumpdelta=jump-jump7
-	        if not ni in outdct[atn]:outdct[atn][ni]=[None,jumpdelta]
-	        else:outdct[atn][ni][1]+=jumpdelta
-	return outdct
+        Ion=max(0.0001,ion)
+        pkadct=read_csv_pkaoutput(seq,temperature,ion,pkacsvfilename)
+        if pkadct==None:
+          pkadct=calc_pkas_from_seq('n'+seq+'c',temperature,Ion)
+          write_csv_pkaoutput(pkadct,seq,temperature,ion)
+        outdct={}
+        for i in pkadct:
+          if VERB:print('pkares: %6.3f %6.3f %1s'%pkadct[i],i)
+          pKa,nH,resi=pkadct[i]
+          frac =fun(pH,pKa,nH)
+          frac7=fun(7.0,pK0[resi],nH)
+          if resi in 'nc':jump=0.0#so far
+          else:
+           for atn in bbatns:
+            if not atn in outdct:outdct[atn]={}
+            if VERB:print('data:',atn,pKa,nH,resi,i,atn,pH)
+            dctresi=dct[resi]
+            try:
+                delta=dctresi[atn]
+                jump =frac *delta
+                jump7=frac7*delta
+                key=(resi,atn)
+            except KeyError:
+                ##if not (resi in 'RKCY' and atn=='H') and not (resi == 'R' and atn=='N'):
+                print('warning no key:',resi,i,atn)
+                delta=999;jump=999;jump7=999
+            if delta<99:
+             jumpdelta=jump-jump7
+             if not i in outdct[atn]:outdct[atn][i]=[resi,jumpdelta]
+             else:
+                outdct[atn][i][0]=resi
+                outdct[atn][i][1]+=jumpdelta
+             if VERB:print('%3s %5.2f %6.4f %s %3d %5s %8.5f %8.5f %4.2f'%(atn,pKa,nH,resi,i,atn,jump,jump7,pH))
+             if resi+'p' in dct and atn in dct[resi+'p']:
+              for n in range(2):
+                ni=i+2*n-1
+                ##if ni is somewhere in seq...
+                nresi=resi+'ps'[n]
+                ndelta=dct[nresi][atn]
+                jump =frac *ndelta
+                jump7=frac7*ndelta
+                jumpdelta=jump-jump7
+                if not ni in outdct[atn]:outdct[atn][ni]=[None,jumpdelta]
+                else:outdct[atn][ni][1]+=jumpdelta
+        return outdct
 
 def getpredshifts(seq,temperature,pH,ion,usephcor=True,pkacsvfile=None,identifier=''):
         tempdct=gettempkoeff()
         bbatns =['C','CA','CB','HA','H','N','HB']
-	if usephcor:
-	  phcorrs=getphcorrs(seq,temperature,pH,ion,pkacsvfile)
-	else:phcorrs={}
-	shiftdct={}
-	for i in range(1,len(seq)-1):
-	  if seq[i] in AAstandard:#else: do nothing
-	    res=str(i+1)
-	    trip=seq[i-1]+seq[i]+seq[i+1]
-	    phcorr=None
-	    shiftdct[(i+1,seq[i])]={}
-	    for at in bbatns:
-	      if not (trip[1],at) in [('G','CB'),('G','HB'),('P','H')]:
-		if i==1:
-		  pent='n'+     trip+seq[i+2]
-		elif i==len(seq)-2:
-		  pent=seq[i-2]+trip+'c'
-		else:
-		  pent=seq[i-2]+trip+seq[i+2]
-	        shp=predPentShift(pent,at)
-		if shp != None:
-	          if at != 'HB':shp+=gettempcorr(trip[1],at,tempdct,temperature)
-		  if at in phcorrs and i in phcorrs[at]:
-		     phdata=phcorrs[at][i]
-		     resi=phdata[0]
-		     ##assert resi==seq[i]
-		     if seq[i] in 'CDEHRKY' and resi != seq[i]:
-			print('WARNING: residue mismatch',resi,seq[i],i,phdata,at)
-		     phcorr=phdata[1]
-		     if abs(phcorr)<9.9:
-		       shp-=phcorr
-		  shiftdct[(i+1,seq[i])][at]=shp
-		  if VERB:print('predictedshift: %5s %3d %1s %2s %8.4f'%(identifier,i,seq[i],at,shp),phcorr)
-	return shiftdct
+        if usephcor:
+          phcorrs=getphcorrs(seq,temperature,pH,ion,pkacsvfile)
+        else:phcorrs={}
+        shiftdct={}
+        for i in range(1,len(seq)-1):
+          if seq[i] in AAstandard:#else: do nothing
+            res=str(i+1)
+            trip=seq[i-1]+seq[i]+seq[i+1]
+            phcorr=None
+            shiftdct[(i+1,seq[i])]={}
+            for at in bbatns:
+              if not (trip[1],at) in [('G','CB'),('G','HB'),('P','H')]:
+                if i==1:
+                  pent='n'+     trip+seq[i+2]
+                elif i==len(seq)-2:
+                  pent=seq[i-2]+trip+'c'
+                else:
+                  pent=seq[i-2]+trip+seq[i+2]
+                shp=predPentShift(pent,at)
+                if shp != None:
+                  if at != 'HB':shp+=gettempcorr(trip[1],at,tempdct,temperature)
+                  if at in phcorrs and i in phcorrs[at]:
+                     phdata=phcorrs[at][i]
+                     resi=phdata[0]
+                     ##assert resi==seq[i]
+                     if seq[i] in 'CDEHRKY' and resi != seq[i]:
+                        print('WARNING: residue mismatch',resi,seq[i],i,phdata,at)
+                     phcorr=phdata[1]
+                     if abs(phcorr)<9.9:
+                       shp-=phcorr
+                  shiftdct[(i+1,seq[i])][at]=shp
+                  if VERB:print('predictedshift: %5s %3d %1s %2s %8.4f'%(identifier,i,seq[i],at,shp),phcorr)
+        return shiftdct
 
 def writeOutput(name,dct):
-	try:out=open(name,'w')
-	except IOError:
-	  print('warning file name too long!',len(name),name)
-	  subnames=name.split('_')
-	  name=string.join([subnames[0]]+[subnames[1][:120]]+subnames[2:],'_')
-	  out=open(name,'w')
+        try:out=open(name,'w')
+        except IOError:
+          print('warning file name too long!',len(name),name)
+          subnames=name.split('_')
+          name='_'.join([subnames[0]]+[subnames[1][:120]]+subnames[2:])
+          out=open(name,'w')
         bbatns =['N','C','CA','CB','H','HA','HB']
-	out.write('#NUM AA   N ')
-	out.write(' %7s %7s %7s %7s %7s %7s\n'%tuple(bbatns[1:]))
-	reskeys=dct.keys();reskeys.sort()
-	for resnum,resn in reskeys:
-	  shdct=dct[(resnum,resn)]
-	  if len(shdct)>0:
-	    out.write('%-4d %1s '%(resnum,resn))
-	    for at in bbatns:
-	      shp=0.0
-	      if at in shdct:shp=shdct[at]
-	      out.write(' %7.3f'%shp)
-	  out.write('\n')
-	out.close()
+        out.write('#NUM AA   N ')
+        out.write(' %7s %7s %7s %7s %7s %7s\n'%tuple(bbatns[1:]))
+        reskeys=dct.keys();reskeys.sort()
+        for resnum,resn in reskeys:
+          shdct=dct[(resnum,resn)]
+          if len(shdct)>0:
+            out.write('%-4d %1s '%(resnum,resn))
+            for at in bbatns:
+              shp=0.0
+              if at in shdct:shp=shdct[at]
+              out.write(' %7.3f'%shp)
+          out.write('\n')
+        out.close()
 
 def potenci(seq,pH=7.0,temp=298,ion=0.1,pkacsvfile=None,doreturn=True):
     ##README##......
@@ -977,8 +977,8 @@ def potenci(seq,pH=7.0,temp=298,ion=0.1,pkacsvfile=None,doreturn=True):
     name='outPOTENCI_%s_T%6.2f_I%4.2f_pH%4.2f.txt'%(seq[:min(150,len(seq))],temp,ion,pH)
     usephcor = pH<6.99 or pH>7.01
     if len(seq)<5:
-	print('FAILED: at least 5 residues are required (exiting)' )
-	raise SystemExit
+        print('FAILED: at least 5 residues are required (exiting)' )
+        raise SystemExit()
     #------------- now ready to generate predicted shifts ---------------------
     print('predicting random coil chemical shift with POTENCI using:',seq,pH,temp,ion,pkacsvfile)
     shiftdct=getpredshifts(seq,temp,pH,ion,usephcor,pkacsvfile)
@@ -1003,36 +1003,36 @@ class ShiftDict(dict):
         self.counts={'H':0,'C':0,'N':0,'P':0}#P is for DNA
 
     def writeTable(self,pdbID,pref='predictions_',col=0):
-	if pref != None:
-	  pdbID=string.join(pdbID).split('')##+'R'
-	  fil=open(pref+pdbID+'.out','w')
-	  fil.write(' NUM    RES      HA       H        N       CA        CB       C   \n')
-	  fil.write(' ----  ------ -------- ------- -------- -------- -------- --------\n')
-	else:fil=open('junk','w')
-	ress=self.keys()
-	ress.sort(lambda x,y: cmp(eval(x),eval(y)))
-	##avedct =dict(zip(['HA','H','N','CA','CB','C'],[SubContainer() for i in range(6)]))
-	lavedct=dict(zip(['HA','H','N','CA','CB','C'],[SubContainer() for i in range(6)]))
-	for res in ress:
-	  if len(self[res])>0:
-	    resn=None
-	    fil.write('  %3s  '%res)
-	    fil.write('  %1s  '%self[res][self[res].keys()[0]][2])#generalize
-	    for at in ['HA','H','N','CA','CB','C']:
-	      if at in self[res]:
-		vals=self[res][at];shift=vals[col]
-		fil.write(' %8.4f'%shift)
-		if shift>0.0:
-		  ##avedct[at].update(shift)
-		  lavedct[at].update(log(shift))
-	      else:
-		fil.write('   0.0000')
-	    fil.write('\n')
-	fil.close()
-	##return avedct,lavedct
-	return lavedct
+        if pref != None:
+          pdbID=''.join(pdbID.split()) ##+'R'
+          fil=open(pref+pdbID+'.out','w')
+          fil.write(' NUM    RES      HA       H        N       CA        CB       C   \n')
+          fil.write(' ----  ------ -------- ------- -------- -------- -------- --------\n')
+        else:fil=open('junk','w')
+        ress=self.keys()
+        ress.sort(lambda x,y: cmp(eval(x),eval(y)))
+        ##avedct =dict(zip(['HA','H','N','CA','CB','C'],[SubContainer() for i in range(6)]))
+        lavedct=dict(zip(['HA','H','N','CA','CB','C'],[SubContainer() for i in range(6)]))
+        for res in ress:
+          if len(self[res])>0:
+            resn=None
+            fil.write('  %3s  '%res)
+            fil.write('  %1s  '%self[res][self[res].keys()[0]][2])#generalize
+            for at in ['HA','H','N','CA','CB','C']:
+              if at in self[res]:
+                vals=self[res][at];shift=vals[col]
+                fil.write(' %8.4f'%shift)
+                if shift>0.0:
+                  ##avedct[at].update(shift)
+                  lavedct[at].update(log(shift))
+              else:
+                fil.write('   0.0000')
+            fil.write('\n')
+        fil.close()
+        ##return avedct,lavedct
+        return lavedct
 
-		
+                
 class Parser:
 
     def __init__(self,buf):
@@ -1079,16 +1079,16 @@ class Parser:
         self.terminated=True
 
     def getExcerpt(self,end=None):
-	if end==None:end=self.numlines
-	return self.buffer[self.start:end]
+        if end==None:end=self.numlines
+        return self.buffer[self.start:end]
 
     def getCurrent(self):
-	return self.buffer[self.start]
+        return self.buffer[self.start]
 
     def findShiftData(self,ch,verb=True,skipCO=False):
         self.search(s="_Saveframe_category",s2='assigned_chemical_shifts',
                     positions=[0],positions2=[1])
-	print('finding NMR shifts for chain',ch)
+        print('finding NMR shifts for chain',ch)
         if verb:print(self.start)
         li,mi=None,None
         while mi==None:
@@ -1127,13 +1127,13 @@ class Parser:
         if verb:print(idict)
         startI=self.search('noneblank',incr=0)
         endI=self.search(incr=0)
-	if verb:print(startI,endI)
+        if verb:print(startI,endI)
         return getShiftDBA31(startI,endI,self.buffer,ch,idict)
 
     def findReference(self,verb=True):
         self.search(s="_Saveframe_category",s2='chemical_shift_reference',
                     positions=[0],positions2=[1])
-	print('finding reference')
+        print('finding reference')
         if verb:print(self.start)
         li,mi=None,None
         while mi==None:
@@ -1153,13 +1153,13 @@ class Parser:
         if verb:print(idict)
         startI=self.search('noneblank',incr=0)
         endI=self.search(incr=0)
-	##return [self.buffer[i][idict['Mol_common_name']] for i in range(startI,endI)]
-	return [self.buffer[i][pos] for i in range(startI,endI)]
+        ##return [self.buffer[i][idict['Mol_common_name']] for i in range(startI,endI)]
+        return [self.buffer[i][pos] for i in range(startI,endI)]
 
     def findSampleConditions(self,verb=True):
         self.search(s="_Saveframe_category",s2='sample_conditions',
                     positions=[0],positions2=[1])
-	print('finding sample conditions')
+        print('finding sample conditions')
         if verb:print(self.start)
         li,mi=None,None
         while mi==None:
@@ -1179,41 +1179,41 @@ class Parser:
         if verb:print(idict)
         startI=self.search('noneblank',incr=0)
         endI=self.search(incr=0)
-	dct={}
-	for i in range(startI,endI):
-	   lin=self.buffer[i]
-	   key=lin[pos]
-	   if key[0]=="'":
-	     key=key[1:]
-	     for k in range(1,10):
-		wordk=lin[pos+k]
-		key+=(' '+wordk)
-		if wordk[-1]=="'":
-		  key=key[:-1]
-		  break
-	     ##dct[key]=lin[pos+k+1]
-	     dct[key]=(lin[pos+k+1],lin[pos+k+1+2])#value,unit
-	   else:
-	     dct[key]=lin[pos+1]
-	return dct
-	
+        dct={}
+        for i in range(startI,endI):
+           lin=self.buffer[i]
+           key=lin[pos]
+           if key[0]=="'":
+             key=key[1:]
+             for k in range(1,10):
+                wordk=lin[pos+k]
+                key+=(' '+wordk)
+                if wordk[-1]=="'":
+                  key=key[:-1]
+                  break
+             ##dct[key]=lin[pos+k+1]
+             dct[key]=(lin[pos+k+1],lin[pos+k+1+2])#value,unit
+           else:
+             dct[key]=lin[pos+1]
+        return dct
+        
     def findDatabaseMatches(self,verb=False):
-	dct={}
-	self.start=0
+        dct={}
+        self.start=0
         k=self.search('_Database_name')
-	if k==None:
-	  print('warning no database matches')
-	  return {}
-	for i in range(len(self.buffer)-k):
-	  lin=self.buffer[k+i]
-	  if len(lin)>0:
-	    if lin[0]=='stop_':return dct
-	  if len(lin)>1:
-	    dbnam=lin[0]
-	    if not dbnam in dct:dct[dbnam]=[]
-	    if dbnam in ['BMRB','PDB','DBJ','EMBL','GB','REF','SP','TPG']:
-	      dbid=lin[1]
-	      dct[dbnam].append(dbid)
+        if k==None:
+          print('warning no database matches')
+          return {}
+        for i in range(len(self.buffer)-k):
+          lin=self.buffer[k+i]
+          if len(lin)>0:
+            if lin[0]=='stop_':return dct
+          if len(lin)>1:
+            dbnam=lin[0]
+            if not dbnam in dct:dct[dbnam]=[]
+            if dbnam in ['BMRB','PDB','DBJ','EMBL','GB','REF','SP','TPG']:
+              dbid=lin[1]
+              dct[dbnam].append(dbid)
 
 def getShiftDBA31(start,end,buf,chnum,idict,includeLabel=True,includeAmb=False):
     dba=ShiftDict()
@@ -1224,17 +1224,17 @@ def getShiftDBA31(start,end,buf,chnum,idict,includeLabel=True,includeAmb=False):
         ##if ambc in ['1','2','3','.']:#unamb, geminal, arom (sym degenerate), None
             val=lst[idict['Atom_chem_shift.Val_err']]
             if val=='.':std=None
-            else:std=string.atof(val)
+            else:std=float(val)
             if std==None or std<=1.3:#was 1.3
                 elem=lst[idict['Atom_chem_shift.Atom_type']]
                 res=lst[idict['Atom_chem_shift.Seq_ID']]
                 rl3=lst[idict['Atom_chem_shift.Comp_ID']]
                 at= lst[idict['Atom_chem_shift.Atom_ID']]
-                avg=string.atof(lst[idict['Atom_chem_shift.Val']])
+                avg=float(lst[idict['Atom_chem_shift.Val']])
                 if not dba.has_key(res):dba[res]={}
-		dba[res][at]=[avg,std,rl3,ambc]
+                dba[res][at]=[avg,std,rl3,ambc]
                 dba.counts[elem]+=1
-	    else:print('skipping',std)
+            else:print('skipping',std)
     return dba  
 
 def getShiftDBA(start,end,buf,chnum,idict,includeLabel=True,includeAmb=True,skipCO=False):#was includeAmb=False
@@ -1247,160 +1247,160 @@ def getShiftDBA(start,end,buf,chnum,idict,includeLabel=True,includeAmb=True,skip
             val=lst[idict['Chem_shift_value_error']]
             ##if val=='.':std=None
             if val in ['.','@']:std=None
-            else:std=string.atof(val)
+            else:std=float(val)
             if std==None or std<=1.3:#was 1.3
                 elem=lst[idict['Atom_type']]
                 res=lst[idict['Residue_seq_code']]
                 ##res=lst[idict['Residue_author_seq_code']]
                 rl3=lst[idict['Residue_label']]
                 at= lst[idict['Atom_name']]
-                avg=string.atof(lst[idict['Chem_shift_value']])
+                avg=float(lst[idict['Chem_shift_value']])
                 if not dba.has_key(res):dba[res]={}
-		if not (skipCO and at=='C'):
+                if not (skipCO and at=='C'):
                  if includeLabel:
-		  if includeAmb:
+                  if includeAmb:
                     dba[res][at]=[avg,std,rl3,ambc]
-		  else:
+                  else:
                     dba[res][at]=[avg,std,rl3]
                  else:
-		  if includeAmb:
+                  if includeAmb:
                     dba[res][at]=[avg,std,'X',ambc]
-		  else:
+                  else:
                     dba[res][at]=[avg,std,'X']
                 dba.counts[elem]+=1
-		##print(res,rl3,at,avg,ambc)
-		##print(dba[res][at])
-	    else:print('skipping',std)
+                ##print(res,rl3,at,avg,ambc)
+                ##print(dba[res][at])
+            else:print('skipping',std)
     ##dba.show()
     if False:#includeAmb:
-	dba.defineambiguities()
-	dba.show()
+        dba.defineambiguities()
+        dba.show()
     return dba  
 
 def convChi2CDF(rss,k):
-	return ((((rss/k)**(1.0/6))-0.50*((rss/k)**(1.0/3))+1.0/3*((rss/k)**(1.0/2)))\
-		- (5.0/6-1.0/9/k-7.0/648/(k**2)+25.0/2187/(k**3)))\
-		/ sqrt(1.0/18/k+1.0/162/(k**2)-37.0/11664/(k**3))
+        return ((((rss/k)**(1.0/6))-0.50*((rss/k)**(1.0/3))+1.0/3*((rss/k)**(1.0/2)))\
+                - (5.0/6-1.0/9/k-7.0/648/(k**2)+25.0/2187/(k**3)))\
+                / sqrt(1.0/18/k+1.0/162/(k**2)-37.0/11664/(k**3))
 
 
 
 class ShiftGetter:
 
     def __init__(self,bmrID):
-	self.bmrID=bmrID
-	path=''
-	bmrname=path+'bmr'+self.bmrID+'.str'
-	print('opening bmr shift file',bmrname)
-	try:open(bmrname)
-	except IOError:
-	  ##try:
-	  ##  bmrname='new'+bmrname
-	  ##  open(bmrname)
-	  ##except IOError:
-	    print('getting bmrfile',self.bmrID)
-	    bmrpath='http://www.bmrb.wisc.edu/ftp/pub/bmrb/entry_directories/'
-	    platform=sys.platform
-	    if platform.startswith('linux'):
-	      os.system('wget %sbmr%s/bmr%s_21.str'%(bmrpath,self.bmrID,self.bmrID))
-	      os.system('mv bmr%s_21.str %sbmr%s.str'%(self.bmrID,path,self.bmrID))
-	    elif 'os' in platform or platform.startswith('darwin'):
-	      os.system('curl -O %sbmr%s/bmr%s_21.str'%(bmrpath,self.bmrID,self.bmrID))
-	      os.system('mv bmr%s_21.str %sbmr%s.str'%(self.bmrID,path,self.bmrID))
-	    elif 'win' in platform:
-	    ##else:
-	      os.system('C:\Windows\System32\curl.exe -O %sbmr%s/bmr%s_21.str'%(bmrpath,self.bmrID,self.bmrID))#if problems: -> manual download file...
-	      os.system('ren bmr%s_21.str %sbmr%s.str'%(self.bmrID,path,self.bmrID))
-	buf=initfil2(bmrname)
-	parser=Parser(buf)
+        self.bmrID=bmrID
+        path=''
+        bmrname=path+'bmr'+self.bmrID+'.str'
+        print('opening bmr shift file',bmrname)
+        try:open(bmrname)
+        except IOError:
+          ##try:
+          ##  bmrname='new'+bmrname
+          ##  open(bmrname)
+          ##except IOError:
+            print('getting bmrfile',self.bmrID)
+            bmrpath='http://www.bmrb.wisc.edu/ftp/pub/bmrb/entry_directories/'
+            platform=sys.platform
+            if platform.startswith('linux'):
+              os.system('wget %sbmr%s/bmr%s_21.str'%(bmrpath,self.bmrID,self.bmrID))
+              os.system('mv bmr%s_21.str %sbmr%s.str'%(self.bmrID,path,self.bmrID))
+            elif 'os' in platform or platform.startswith('darwin'):
+              os.system('curl -O %sbmr%s/bmr%s_21.str'%(bmrpath,self.bmrID,self.bmrID))
+              os.system('mv bmr%s_21.str %sbmr%s.str'%(self.bmrID,path,self.bmrID))
+            elif 'win' in platform:
+            ##else:
+              os.system('C:\Windows\System32\curl.exe -O %sbmr%s/bmr%s_21.str'%(bmrpath,self.bmrID,self.bmrID))#if problems: -> manual download file...
+              os.system('ren bmr%s_21.str %sbmr%s.str'%(self.bmrID,path,self.bmrID))
+        buf=initfil2(bmrname)
+        parser=Parser(buf)
         parser.search(s="Polymer",s2='residue',positions=[1],positions2=[2])
         self.dbdct={}
         self.title='no title...'
-	seq=''
-	if True:
+        seq=''
+        if True:
           k=parser.search('_Mol_residue_sequence')
-	  if k==None:raise SystemExit, "no sequence found (bmrID might not exist) %s"%self.bmrID
+          if k==None:raise SystemExit("no sequence found (bmrID might not exist) %s"%self.bmrID)
           k-=1
-	  print('try buf[k]',buf[k])
-	  if len(buf[k])>1:
-	    seq=buf[k][1]
-	    print('found sequence',seq)
-	if len(seq)==0:
+          print('try buf[k]',buf[k])
+          if len(buf[k])>1:
+            seq=buf[k][1]
+            print('found sequence',seq)
+        if len(seq)==0:
          i0=parser.search(s=";",positions=[0])
-	 print(i0)
+         print(i0)
          if i0==None:
-	  print('warning no residues found (maybe missing semicolons?)',self.bmrID)
-	  self.moldba=ShiftDict()#counts er all 0
-	  return
+          print('warning no residues found (maybe missing semicolons?)',self.bmrID)
+          self.moldba=ShiftDict()#counts er all 0
+          return
          i1=parser.search(s=";",positions=[0])
-	 for i in range(i0,i1-1):
-	  if len(buf[i])>0:#some lines can be blank
-	    seq+=buf[i][0]
-	##print(i0,i1,seq)
-	seq=string.upper(seq)
-	self.seq=seq
-	if len(seq)<10:
-	  print('WARNING small or empty sequence!')
-	  self.moldba=ShiftDict()#counts er all 0
-	  return
-	print('seq: ',seq)
-	xcount=seq.count('X')
-	xcount+=seq.count('U')#RNA
-	print('xcount:',self.bmrID,xcount)
-	if xcount>5 or xcount*1.0/len(seq)>0.15:
-	  print('warning: high xcount',xcount,seq)
-	  self.moldba=ShiftDict()#counts er all 0
-	  return
-	moldba=parser.findShiftData('none',verb=False,skipCO=self.bmrID in ['15719','15274','15506'])
-	print(moldba.counts)
-	self.moldba=moldba
-	parser.start=0
+         for i in range(i0,i1-1):
+          if len(buf[i])>0:#some lines can be blank
+            seq+=buf[i][0]
+        ##print(i0,i1,seq)
+        seq=seq.upper()
+        self.seq=seq
+        if len(seq)<10:
+          print('WARNING small or empty sequence!')
+          self.moldba=ShiftDict()#counts er all 0
+          return
+        print('seq: ',seq)
+        xcount=seq.count('X')
+        xcount+=seq.count('U')#RNA
+        print('xcount:',self.bmrID,xcount)
+        if xcount>5 or xcount*1.0/len(seq)>0.15:
+          print('warning: high xcount',xcount,seq)
+          self.moldba=ShiftDict()#counts er all 0
+          return
+        moldba=parser.findShiftData('none',verb=False,skipCO=self.bmrID in ['15719','15274','15506'])
+        print(moldba.counts)
+        self.moldba=moldba
+        parser.start=0
         k=parser.search('_Entry_title')
-	self.title=string.join(buf[k+1],' ')
-	if buf[k+2][0] != ';':
-	  self.title+=('  '+string.join(buf[k+2],' '))
+        self.title=' '.join(buf[k+1])
+        if buf[k+2][0] != ';':
+          self.title+=('  '+' '.join(buf[k+2]))
         k2=parser.search('_Details')
-	if k2 != None and len(buf[k2-1])>1 and buf[k2-1][1] != '.':
-	  print('details:',k2,buf[k2-1])
-	  self.title+=(' :'+string.join(buf[k2-1][1:],' '))
-	print(self.title)
+        if k2 != None and len(buf[k2-1])>1 and buf[k2-1][1] != '.':
+          print('details:',k2,buf[k2-1])
+          self.title+=(' :'+' '.join(buf[k2-1][1:]))
+        print(self.title)
         self.references=parser.findReference(verb=False)
         print(self.references)
-	parser.start=0
+        parser.start=0
         parser.terminated=False#OK?
         conddct=parser.findSampleConditions(verb=False)
-	print(conddct)
-	##self.pH=-9.99;self.temperature=999.9
-	self.pH=7.0;self.temperature=298.0
-	if 'pH' in conddct:
-	   if conddct['pH']=='.':self.pH=-9.99
-	   else:self.pH=eval(conddct['pH'])
-	if 'temperature' in conddct:
-	   if conddct['temperature']=='.':self.temperature=298.0
-	   else:self.temperature=eval(conddct['temperature'])
-	if 'ionic strength' in conddct:
-	   ionstr=conddct['ionic strength'][0]
-	   if ionstr in ['.',' ','']:self.ion=0.1
-	   else:self.ion=eval(conddct['ionic strength'][0])
-	   unit=conddct['ionic strength'][1]
-	   if unit=='mM':self.ion/=1000.0
-	else:self.ion=0.1
-	parser.start=0
+        print(conddct)
+        ##self.pH=-9.99;self.temperature=999.9
+        self.pH=7.0;self.temperature=298.0
+        if 'pH' in conddct:
+           if conddct['pH']=='.':self.pH=-9.99
+           else:self.pH=eval(conddct['pH'])
+        if 'temperature' in conddct:
+           if conddct['temperature']=='.':self.temperature=298.0
+           else:self.temperature=eval(conddct['temperature'])
+        if 'ionic strength' in conddct:
+           ionstr=conddct['ionic strength'][0]
+           if ionstr in ['.',' ','']:self.ion=0.1
+           else:self.ion=eval(conddct['ionic strength'][0])
+           unit=conddct['ionic strength'][1]
+           if unit=='mM':self.ion/=1000.0
+        else:self.ion=0.1
+        parser.start=0
         k=parser.search('_System_physical_state')
         if k==None:
-	  print('warning: phys_state not defined in bmrbfile',self.bmrID)
-	  self.phys_state='unknown'
-	else: self.phys_state=string.join(buf[k-1][1:],' ')
-	print(self.phys_state)
-	print('summary_info: %5s %4.2f %5.1f %3d'%(self.bmrID,self.pH,self.temperature,len(self.seq)),)
-	print(self.phys_state,)
-	print(self.title)
+          print('warning: phys_state not defined in bmrbfile',self.bmrID)
+          self.phys_state='unknown'
+        else: self.phys_state=' '.join(buf[k-1][1:])
+        print(self.phys_state)
+        print('summary_info: %5s %4.2f %5.1f %3d'%(self.bmrID,self.pH,self.temperature,len(self.seq)),)
+        print(self.phys_state,)
+        print(self.title)
         self.dbdct=parser.findDatabaseMatches(verb=True)
         print(self.dbdct)
         
     def write_rereferenced(self,lacsoffs):
-	out=open('rereferenced/bmr%s.str'%self.bmrID,'w')
-	out.write('data_%s\n'%self.bmrID)
-	out.write('''
+        out=open('rereferenced/bmr%s.str'%self.bmrID,'w')
+        out.write('data_%s\n'%self.bmrID)
+        out.write('''
 #######################
 #  Entry information  #
 #######################
@@ -1411,22 +1411,22 @@ save_entry_information
    _Entry_title
 ;
 ''')
-	out.write('%s\n'%self.title)
-	out.write(';\n')
-	out.write('''
+        out.write('%s\n'%self.title)
+        out.write(';\n')
+        out.write('''
         ##############################
         #  Polymer residue sequence  #
         ##############################
 
 ''')
-	s=self.seq
-	out.write('_Residue_count   %d\n'%len(s))
-	out.write('''_Mol_residue_sequence
+        s=self.seq
+        out.write('_Residue_count   %d\n'%len(s))
+        out.write('''_Mol_residue_sequence
 ;
 ''')
-	for i in range((len(s)-1)/20+1):
-	  out.write('%s\n'%s[i*20:min(len(s),(i+1)*20)])
-	out.write('''
+        for i in range((len(s)-1)/20+1):
+          out.write('%s\n'%s[i*20:min(len(s),(i+1)*20)])
+        out.write('''
 
         ###################################
         #  Assigned chemical shift lists  #
@@ -1447,366 +1447,367 @@ save_assigned_chem_shift_list_1
       _Chem_shift_ambiguity_code
 
 ''')
-	cnt=1
-	for i in range(len(s)):
-	  res=str(i+1)
-	  if res in self.moldba:
-	    shdct=self.moldba[res]
-	    for at in shdct:
-		shave,shstd,rl3,ambc=shdct[at]
-		if at in lacsoffs:refsh=shave+lacsoffs[at]
-		else:refsh=shave
-		if shstd==None:
-		  if at[0] in 'CN':shstd=0.3
-		  else:shstd=0.05
-		data=(cnt,res,res,rl3,at,at[0],refsh,shstd,ambc);print(data)
-		out.write('     %4d %3s %3s %3s %-4s %1s %7.3f %4.2f %1s\n'%data)
-		cnt+=1
-	out.write('''
+        cnt=1
+        for i in range(len(s)):
+          res=str(i+1)
+          if res in self.moldba:
+            shdct=self.moldba[res]
+            for at in shdct:
+                shave,shstd,rl3,ambc=shdct[at]
+                if at in lacsoffs:refsh=shave+lacsoffs[at]
+                else:refsh=shave
+                if shstd==None:
+                  if at[0] in 'CN':shstd=0.3
+                  else:shstd=0.05
+                data=(cnt,res,res,rl3,at,at[0],refsh,shstd,ambc);print(data)
+                out.write('     %4d %3s %3s %3s %-4s %1s %7.3f %4.2f %1s\n'%data)
+                cnt+=1
+        out.write('''
 
    stop_
 
 save_
 ''')
-	out.close()
+        out.close()
 
     def writeShiftY(self,out):
-	header='#NUM AA HA CA CB CO N HN'
+        header='#NUM AA HA CA CB CO N HN'
         bbatns =['HA','CA','CB','C','N','H']##,'HA3','HB','HB2','HB3']
-	out.write(header+'\n')
-	seq=self.seq
-	for i in range(1,len(seq)-1):
-	  res=str(i+1)
-	  resi=seq[i]
-	  out.write('%s %1s'%(res,resi))
-	  if res in self.moldba:
-	    shdct=self.moldba[res]
-	    for at in bbatns:
-	      sho=0.0
-	      if resi=='G' and at=='HA':
-		if 'HA2' in shdct and 'HA3' in shdct:
-		  sho=(shdct['HA2'][0]+shdct['HA3'][0])/2
-	      if at in shdct:
-		sho=shdct[at][0]
-	      out.write(' %7.3f'%sho)
-	  out.write('\n')
+        out.write(header+'\n')
+        seq=self.seq
+        for i in range(1,len(seq)-1):
+          res=str(i+1)
+          resi=seq[i]
+          out.write('%s %1s'%(res,resi))
+          if res in self.moldba:
+            shdct=self.moldba[res]
+            for at in bbatns:
+              sho=0.0
+              if resi=='G' and at=='HA':
+                if 'HA2' in shdct and 'HA3' in shdct:
+                  sho=(shdct['HA2'][0]+shdct['HA3'][0])/2
+              if at in shdct:
+                sho=shdct[at][0]
+              out.write(' %7.3f'%sho)
+          out.write('\n')
 
     def cmp2pred1(self,verb=False):
-	seq=self.seq
+        seq=self.seq
         predshiftdct=potenci(seq,self.pH,self.temperature,self.ion)
         bbatns0=['C','CA','CB','HA','H','N']
         bbatns =['C','CA','CB','HA','H','N','HB']##'HA2','HA3','HB','HB2','HB3']
         ##bbatns =['C','CA','CB','H','N']##'HA2','HA3','HB','HB2','HB3']
-	cmpdct={}
-	self.shiftdct={}
-	for i in range(1,len(seq)-1):
-	  res=str(i+1)
-	  ##if res in self.moldba:
-	  if res in self.moldba and seq[i] in aa1s:
-	    trip=seq[i-1]+seq[i]+seq[i+1]
-	    shdct=self.moldba[res]
-	    for at in bbatns:
-	      sho=None
-	      if at in shdct:
-		sho=shdct[at][0]
-	      elif seq[i]=='G' and at=='HA' or at=='HB':
-		shs=[]
-		for pref in '23':
-		  atp=at+pref
-		  if atp in shdct:
-		    shs.append(shdct[atp][0])
-		if len(shs)>0:sho=average(shs)
-	      if sho != None:
-		if i==1:
-		  pent='n'+     trip+seq[i+2]
-		elif i==len(seq)-2:
-		  pent=seq[i-2]+trip+'c'
-		else:
-		  pent=seq[i-2]+trip+seq[i+2]
-		##shp=refinedpred(paramdct[at],pent,at,tempdct,self.temperature)
-		shp=predshiftdct[(i+1,seq[i])][at]
-		if shp != None:
-		  self.shiftdct[(i,at)]=[sho,pent]
-		  diff=sho-shp
-		  if verb:print('diff is:',self.bmrID,i,seq[i],at,sho,shp,abs(diff),diff)
-		  if not at in cmpdct:cmpdct[at]={}
-		  cmpdct[at][i]=diff
-	return cmpdct
+        cmpdct={}
+        self.shiftdct={}
+        for i in range(1,len(seq)-1):
+          res=str(i+1)
+          ##if res in self.moldba:
+          if res in self.moldba and seq[i] in aa1s:
+            trip=seq[i-1]+seq[i]+seq[i+1]
+            shdct=self.moldba[res]
+            for at in bbatns:
+              sho=None
+              if at in shdct:
+                sho=shdct[at][0]
+              elif seq[i]=='G' and at=='HA' or at=='HB':
+                shs=[]
+                for pref in '23':
+                  atp=at+pref
+                  if atp in shdct:
+                    shs.append(shdct[atp][0])
+                if len(shs)>0:sho=average(shs)
+              if sho != None:
+                if i==1:
+                  pent='n'+     trip+seq[i+2]
+                elif i==len(seq)-2:
+                  pent=seq[i-2]+trip+'c'
+                else:
+                  pent=seq[i-2]+trip+seq[i+2]
+                ##shp=refinedpred(paramdct[at],pent,at,tempdct,self.temperature)
+                shp=predshiftdct[(i+1,seq[i])][at]
+                if shp != None:
+                  self.shiftdct[(i,at)]=[sho,pent]
+                  diff=sho-shp
+                  if verb:print('diff is:',self.bmrID,i,seq[i],at,sho,shp,abs(diff),diff)
+                  if not at in cmpdct:cmpdct[at]={}
+                  cmpdct[at][i]=diff
+        return cmpdct
 
     def visresults(self,dct,doplot=True,dataset=None,offdct=None,label='',minAIC=999.0,lacsoffs=None,cdfthr=6.0):##6.0):#was minAIC=9.0
-	shout=open('shifts%s.txt'%self.bmrID,'w')
+        shout=open('shifts%s.txt'%self.bmrID,'w')
         bbatns=['C','CA','CB','HA','H','N','HB']
-	cols='brkgcmy'
-	refined_weights={'C':0.1846,'CA':0.1982,'CB':0.1544,'HA':0.02631,'H':0.06708,'N':0.4722,'HB':0.02154}
-	outlivals={'C':5.0000,'CA':7.0000,'CB':7.0000,'HA':1.80,   'H':2.30,   'N':12.00, 'HB':1.80}
-	dats={}
-	maxi=max([max(dct[at].keys()) for at in dct])
-	mini=min([min(dct[at].keys()) for at in dct])#is often 1
-	nres=maxi-mini+1
-	resids=range(mini+1,maxi+2)
-	self.mini=mini
-	tot=zeros(nres)
-	newtot=zeros(nres)
-	newtotsgn=zeros(nres)
-	newtotsgn1=zeros(nres)
-	newtotsgn2=zeros(nres)
-	totnum=zeros(nres)
-	allrmsd=[]
-	totbbsh=0
-	oldct={}
-	allruns=zeros(nres)
-	rdct={}
-	sgnw={'C':1.0,'CA':1.0,'CB':-1.0,'HA':-1.0,'H':-1.0,'N':-1.0,'HB':1.0}#was 'HB':0.0
-	##wbuf=initfil2('weights_oplsda123new7');wdct={}
+        cols='brkgcmy'
+        refined_weights={'C':0.1846,'CA':0.1982,'CB':0.1544,'HA':0.02631,'H':0.06708,'N':0.4722,'HB':0.02154}
+        outlivals={'C':5.0000,'CA':7.0000,'CB':7.0000,'HA':1.80,   'H':2.30,   'N':12.00, 'HB':1.80}
+        dats={}
+        maxi=max([max(dct[at].keys()) for at in dct])
+        mini=min([min(dct[at].keys()) for at in dct])#is often 1
+        nres=maxi-mini+1
+        resids=range(mini+1,maxi+2)
+        self.mini=mini
+        tot=zeros(nres)
+        newtot=zeros(nres)
+        newtotsgn=zeros(nres)
+        newtotsgn1=zeros(nres)
+        newtotsgn2=zeros(nres)
+        totnum=zeros(nres)
+        allrmsd=[]
+        totbbsh=0
+        oldct={}
+        allruns=zeros(nres)
+        rdct={}
+        sgnw={'C':1.0,'CA':1.0,'CB':-1.0,'HA':-1.0,'H':-1.0,'N':-1.0,'HB':1.0}#was 'HB':0.0
+        ##wbuf=initfil2('weights_oplsda123new7');wdct={}
         wbuf=[['weights:', 'N', '-0.0626', '0.0617', '0.2635'], ['weights:', 'C', '0.2717', '0.2466', '0.0306'], ['weights:', 'CA', '0.2586', '0.2198', '0.0394'], ['weights:', 'CB', '-0.2635', '0.1830', '-0.1877'], ['weights:', 'H', '-0.3620', '1.3088', '0.3962'], ['weights:', 'HA', '-1.0732', '0.4440', '-0.4673'], ['weights:', 'HB', '0.5743', '0.2262', '-0.3388']]
         wdct={}
-	for lin in wbuf:wdct[lin[1]]=[eval(lin[n]) for n in (2,3,4)]#lin[2] is first component
-	for at in dct:
-	  vol=outlivals[at]
-	  subtot=zeros(nres)
-	  subtot1=zeros(nres)
-	  subtot2=zeros(nres)
-	  if dataset != None:dataset[at][self.bmrID]=[]
-	  A=array(dct[at].items())
-	  totbbsh+=len(A)
-	  I=bbatns.index(at)
-	  w=refined_weights[at]
-	  shw=A[:,1]/w
-	  off=average(shw)
-	  rms0=sqrt(average(shw**2))
-	  if offdct != None:
+        for lin in wbuf:wdct[lin[1]]=[eval(lin[n]) for n in (2,3,4)]#lin[2] is first component
+        for at in dct:
+          vol=outlivals[at]
+          subtot=zeros(nres)
+          subtot1=zeros(nres)
+          subtot2=zeros(nres)
+          if dataset != None:dataset[at][self.bmrID]=[]
+          A=array(dct[at].items())
+          totbbsh+=len(A)
+          I=bbatns.index(at)
+          w=refined_weights[at]
+          shw=A[:,1]/w
+          off=average(shw)
+          rms0=sqrt(average(shw**2))
+          if offdct != None:
             shw-=offdct[at]#offset correction
             print('using predetermined offset correction',at,offdct[at],offdct[at]*w)
-	  ##shw-=off
-	  shwl=list(shw)
-	  for i in range(len(A)):
-	    resi=int(A[i][0])-mini#minimum value for resi is 0
-	    ashwi=abs(shw[i])
-	    if ashwi>cdfthr:oldct[(at,resi)]=ashwi
-	    tot[resi]+=(min(4.0,ashwi)**2)
-	    for k in [-1,0,1]:
-	      if 0<=resi+k<len(subtot):##maxi:
-	        ##subtot[resi+k]+=(shw[i]*w*wdct[at][0])
-	        subtot[resi+k]+=(clip(shw[i]*w,-vol,vol)*wdct[at][0])
-	        ##subtot1[resi+k]+=(shw[i]*w*wdct[at][1])
-	        subtot1[resi+k]+=(clip(shw[i]*w,-vol,vol)*wdct[at][1])
-	        subtot2[resi+k]+=(clip(shw[i]*w,-vol,vol)*wdct[at][2])
-	    totnum[resi]+=1
-	    if offdct==None:
-	      if 3<i<len(A)-4:
-		vals=shw[i-4:i+5]
-		runstd=std(vals)
-		allruns[resi]+=runstd
-		if not resi in rdct:rdct[resi]={}
-		rdct[resi][at]=average(vals),sqrt(average(vals**2)),runstd
-	  dats[at]=shw
-	  stdw=std(shw)
-	  dAIC=log(rms0/stdw)*len(A)-1
-	  print('rmsd:',at,stdw,off,dAIC)
-	  allrmsd.append(std(shw))
-	  if doplot:
-	    subplot(211)
-	    sca=scatter(A[:,0]+1,shw,alpha=0.5,s=25,edgecolors='none',c=cols[I])
-	    plot((mini+1,maxi+1),[0.0,0.0],'k--')
-	    axis([mini+1,max(resids),-20,20])
-	    ylabel('Weighted Sec Chem Shifts')
-	  newtot+=((subtot/3.0)**2)
-	  newtotsgn+=subtot
-	  newtotsgn1+=subtot1
-	  newtotsgn2+=subtot2
-	T0=list(tot/totnum)
-	cdfs=convChi2CDF(tot,totnum)
-	Th=list(tot/totnum*0.5)
-	tot3=array([0,0]+Th)+array([0]+T0+[0])+array(Th+[0,0])
-	Ts=list(tot)
-	Tn=list(totnum)
-	tot3f=array([0,0]+Ts)+array([0]+Ts+[0])+array(Ts+[0,0])
-	totn3f=array([0,0]+Tn)+array([0]+Tn+[0])+array(Tn+[0,0])
-	cdfs3=convChi2CDF(tot3f[1:-1],totn3f[1:-1])
-	newrms=(newtot*3)/totn3f[1:-1]
-	newcdfs=convChi2CDF(newtot*3,totn3f[1:-1])
+          ##shw-=off
+          shwl=list(shw)
+          for i in range(len(A)):
+            resi=int(A[i][0])-mini#minimum value for resi is 0
+            ashwi=abs(shw[i])
+            if ashwi>cdfthr:oldct[(at,resi)]=ashwi
+            tot[resi]+=(min(4.0,ashwi)**2)
+            for k in [-1,0,1]:
+              if 0<=resi+k<len(subtot):##maxi:
+                ##subtot[resi+k]+=(shw[i]*w*wdct[at][0])
+                subtot[resi+k]+=(clip(shw[i]*w,-vol,vol)*wdct[at][0])
+                ##subtot1[resi+k]+=(shw[i]*w*wdct[at][1])
+                subtot1[resi+k]+=(clip(shw[i]*w,-vol,vol)*wdct[at][1])
+                subtot2[resi+k]+=(clip(shw[i]*w,-vol,vol)*wdct[at][2])
+            totnum[resi]+=1
+            if offdct==None:
+              if 3<i<len(A)-4:
+                vals=shw[i-4:i+5]
+                runstd=std(vals)
+                allruns[resi]+=runstd
+                if not resi in rdct:rdct[resi]={}
+                rdct[resi][at]=average(vals),sqrt(average(vals**2)),runstd
+          dats[at]=shw
+          stdw=std(shw)
+          dAIC=log(rms0/stdw)*len(A)-1
+          print('rmsd:',at,stdw,off,dAIC)
+          allrmsd.append(std(shw))
+          if doplot:
+            subplot(211)
+            sca=scatter(A[:,0]+1,shw,alpha=0.5,s=25,edgecolors='none',c=cols[I])
+            plot((mini+1,maxi+1),[0.0,0.0],'k--')
+            axis([mini+1,max(resids),-20,20])
+            ylabel('Weighted Sec Chem Shifts')
+          newtot+=((subtot/3.0)**2)
+          newtotsgn+=subtot
+          newtotsgn1+=subtot1
+          newtotsgn2+=subtot2
+        T0=list(tot/totnum)
+        cdfs=convChi2CDF(tot,totnum)
+        Th=list(tot/totnum*0.5)
+        tot3=array([0,0]+Th)+array([0]+T0+[0])+array(Th+[0,0])
+        Ts=list(tot)
+        Tn=list(totnum)
+        tot3f=array([0,0]+Ts)+array([0]+Ts+[0])+array(Ts+[0,0])
+        totn3f=array([0,0]+Tn)+array([0]+Tn+[0])+array(Tn+[0,0])
+        cdfs3=convChi2CDF(tot3f[1:-1],totn3f[1:-1])
+        newrms=(newtot*3)/totn3f[1:-1]
+        newcdfs=convChi2CDF(newtot*3,totn3f[1:-1])
         avc=average(cdfs3[cdfs3<20.0])
         numzs=len(cdfs3[cdfs3<20.0])
         numzslt3=len(cdfs3[cdfs3<cdfthr])
         stdcp=std(cdfs3[cdfs3<20.0])
-	atot=sqrt(tot3/2)[1:-1]
-	aresids=array(resids)
-	if offdct==None:
-	  tr=(allruns/totnum)[4:-4]
-	  offdct={}
-	  mintr=None;minval=999
-	  for j in range(len(tr)):
-	    if j+4 in rdct and len(rdct[j+4])==len(dct):#all ats must be represented for this res
-	    ##if j+4 in rdct and len(rdct[j+4])>=len(dct)-1:#all ats (except one as max) must be represented for this res
-	      if tr[j]<minval:
-		minval=tr[j]
-		mintr=j
-	  if mintr==None:return None#still not found
-	  print(len(tr),len(resids[4:-4]),len(atot),mintr+4,min(tr),tr[mintr]##,tr)
-	  for at in rdct[mintr+4]:
-	    roff,std0,stdc=rdct[mintr+4][at]
-	    dAIC=log(std0/stdc)*9-1
-	    print('minimum running average',at,roff,dAIC)
-	    if dAIC>minAIC:
-	      print('using offset correction:',at,roff,dAIC,self.bmrID,label)
-	      offdct[at]=roff
-	    else:
-	      print('rejecting offset correction due to low dAIC:',at,roff,dAIC,self.bmrID,label)
-	      offdct[at]=0.0
-	  return offdct #with the running offsets
-	if dataset != None:
-	  csgns= newtotsgn/totn3f[1:-1]*10
-	  csgnsq=newtotsgn/sqrt(totn3f[1:-1])*10
-	  for I in range(len(resids)):
-	    pass##print('datapoints:',self.bmrID,resids[I],csgns[I],cdfs3[I],csgnsq[I],totn3f[1:-1][I])
-	if doplot:
-	  subplot(212)
-	  ##plot(resids,newtotsgn/sqrt(totn3f[1:-1])*8.0,'r-')
-	  ##plot(resids,newtotsgn1/sqrt(totn3f[1:-1])*8.0,'b-')
-	  plot(resids,cdfs3,'k-')
-	  ##plot((mini+1,maxi+1),[cdfthr,cdfthr],'g--')
-	  plot((mini+1,maxi+1),[8.0,8.0],'g--')
-	  plot((mini+1,maxi+1),[3.0,3.0],'k--')
-	  ##plot((mini+1,maxi+1),[0.0,0.0],'k--')
-	  ##axis([mini+1,max(resids),-16,16])
-	  axis([mini+1,max(resids),-4,16])
-	  ylabel('CheZOD Z-scores')
-	  xlabel('Residue number')
-	if True:
-	 sferr3=0.0
-	 for at in dats:
-	  I=bbatns.index(at)
-	  ashw=abs(dats[at])
-	  Terr=linspace(0.0,5.0,26)
-	  ferr=array([sum(ashw>T) for T in Terr])*1.0/len(ashw)+0.000001
-	  sferr3+=ferr[15]#3.0std-fractile
-	 aferr3=sferr3/len(dats)
-	 F=zeros(2)
-	 for at in dats:
-	  ashw=abs(dats[at])
-	  fners=sum(ashw>1.0)*1.0/len(ashw),sum(ashw>2.0)*1.0/len(ashw)
-	  ##print('fnormerr:',at,fners[0],fners[1])
-	  F+=fners
-	 totnorm=sum(atot>1.5)*1.0/len(atot)
-	 outli0=aresids[atot>1.5]
-	 outli1=aresids[cdfs>cdfthr]
-	 outli3=aresids[cdfs3>cdfthr]
-	 newoutli3=aresids[newcdfs>cdfthr]
-	 finaloutli=[i+mini+1 for i in range(nres) if cdfs[i]>cdfthr or cdfs3[i]>cdfthr and cdfs[i]>0.0 and totnum[i]>0]
-	 print('outliers:',self.bmrID,len(outli0),len(outli1),len(outli3),len(finaloutli),sum(totnum==0)##,finaloutli)
-	 Fa=F/len(dats)
-	 fout=len(finaloutli)*1.0/nres
-	 print(len(oldct),mini,maxi,nres,aresids[totnum==0])
-	 print('summary_stat: %5s %5d %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %4d'%\)
-	  (self.bmrID,sum(self.moldba.counts.values()),average(allrmsd),Fa[0],Fa[1],fout,aferr3,totnorm,totbbsh)
+        atot=sqrt(tot3/2)[1:-1]
+        aresids=array(resids)
+        if offdct==None:
+          tr=(allruns/totnum)[4:-4]
+          offdct={}
+          mintr=None;minval=999
+          for j in range(len(tr)):
+            if j+4 in rdct and len(rdct[j+4])==len(dct):#all ats must be represented for this res
+            ##if j+4 in rdct and len(rdct[j+4])>=len(dct)-1:#all ats (except one as max) must be represented for this res
+              if tr[j]<minval:
+                minval=tr[j]
+                mintr=j
+          if mintr==None:return None#still not found
+          print(len(tr),len(resids[4:-4]),len(atot),mintr+4,min(tr),tr[mintr]) ##,tr)
+          for at in rdct[mintr+4]:
+            roff,std0,stdc=rdct[mintr+4][at]
+            dAIC=log(std0/stdc)*9-1
+            print('minimum running average',at,roff,dAIC)
+            if dAIC>minAIC:
+              print('using offset correction:',at,roff,dAIC,self.bmrID,label)
+              offdct[at]=roff
+            else:
+              print('rejecting offset correction due to low dAIC:',at,roff,dAIC,self.bmrID,label)
+              offdct[at]=0.0
+          return offdct #with the running offsets
+        if dataset != None:
+          csgns= newtotsgn/totn3f[1:-1]*10
+          csgnsq=newtotsgn/sqrt(totn3f[1:-1])*10
+          for I in range(len(resids)):
+            pass##print('datapoints:',self.bmrID,resids[I],csgns[I],cdfs3[I],csgnsq[I],totn3f[1:-1][I])
+        if doplot:
+          subplot(212)
+          ##plot(resids,newtotsgn/sqrt(totn3f[1:-1])*8.0,'r-')
+          ##plot(resids,newtotsgn1/sqrt(totn3f[1:-1])*8.0,'b-')
+          plot(resids,cdfs3,'k-')
+          ##plot((mini+1,maxi+1),[cdfthr,cdfthr],'g--')
+          plot((mini+1,maxi+1),[8.0,8.0],'g--')
+          plot((mini+1,maxi+1),[3.0,3.0],'k--')
+          ##plot((mini+1,maxi+1),[0.0,0.0],'k--')
+          ##axis([mini+1,max(resids),-16,16])
+          axis([mini+1,max(resids),-4,16])
+          ylabel('CheZOD Z-scores')
+          xlabel('Residue number')
+        if True:
+         sferr3=0.0
+         for at in dats:
+          I=bbatns.index(at)
+          ashw=abs(dats[at])
+          Terr=linspace(0.0,5.0,26)
+          ferr=array([sum(ashw>T) for T in Terr])*1.0/len(ashw)+0.000001
+          sferr3+=ferr[15]#3.0std-fractile
+         aferr3=sferr3/len(dats)
+         F=zeros(2)
+         for at in dats:
+          ashw=abs(dats[at])
+          fners=sum(ashw>1.0)*1.0/len(ashw),sum(ashw>2.0)*1.0/len(ashw)
+          ##print('fnormerr:',at,fners[0],fners[1])
+          F+=fners
+         totnorm=sum(atot>1.5)*1.0/len(atot)
+         outli0=aresids[atot>1.5]
+         outli1=aresids[cdfs>cdfthr]
+         outli3=aresids[cdfs3>cdfthr]
+         newoutli3=aresids[newcdfs>cdfthr]
+         finaloutli=[i+mini+1 for i in range(nres) if cdfs[i]>cdfthr or cdfs3[i]>cdfthr and cdfs[i]>0.0 and totnum[i]>0]
+         print('outliers:',self.bmrID,len(outli0),len(outli1),len(outli3),len(finaloutli),sum(totnum==0))   ##,finaloutli)
+         Fa=F/len(dats)
+         fout=len(finaloutli)*1.0/nres
+         print(len(oldct),mini,maxi,nres,aresids[totnum==0])
+         print('summary_stat: %5s %5d %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %4d'%\
+          (self.bmrID,sum(self.moldba.counts.values()),average(allrmsd),Fa[0],Fa[1],fout,aferr3,totnorm,totbbsh)
+      )
 
-	#now accumulate the validated data
-	atns=dct.keys()
-	accdct=dict(zip(atns,[[] for _ in atns]))
-	numol=0
-	iatns=self.shiftdct.keys();iatns.sort()
-	for i,at in iatns:#i is seq enumeration (starting from 0, but terminal allways excluded)
-	  I=bbatns.index(at)
-	  w=refined_weights[at]
-	  ol=False
-	  if i+1 in finaloutli:ol=True
-	  elif (at,i-mini) in oldct:ol=True
-	  if not ol:
-		accdct[at].append(dct[at][i])
-	  else:numol+=1
-	  if dataset != None:
-	    dataset[at][self.bmrID].append(self.shiftdct[(i,at)]+[ol])
-	    vals=dataset[at][self.bmrID][-1]
-	    ##shout.write('%3d %2s %7.3f %5s %6.3f\n'%(i+1,at,vals[0],vals[1],dct[at][i]))
-	    shout.write('%3d %1s %2s %7.3f %5s %6.3f\n'%(i+1,vals[1][2],at,vals[0],vals[1],dct[at][i]))
-	sumrmsd=0.0;totsh=0
-	newoffdct={}
-	for at in accdct:
-	  I=bbatns.index(at)
-	  w=refined_weights[at]
-	  vals=accdct[at]
-	  vals=array(vals)/w
-	  anum=len(vals)
-	  if anum==0:newoffdct[at]=0.0
-	  else:
-	    aoff=average(vals)
-	    astd0=sqrt(average(array(vals)**2))
-	    astdc=std(vals)
-	    adAIC=log(astd0/astdc)*anum-1
-	    if adAIC<minAIC or anum<4:
-	      print('rejecting offset correction due to low adAIC:',at,aoff,adAIC,anum,self.bmrID,label,)
-	      if lacsoffs != None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
-	      else:print
-	      astdc=astd0
-	      aoff=0.0
-	      shout.write('off %2s   0.0\n'%at)
-	    else:
-	      print('using offset correction:',at,aoff,adAIC,anum,self.bmrID,label,)
-	      if lacsoffs != None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
-	      else:print
-	      shout.write('off %2s %7.3f\n'%(at,aoff*w))
-	    sumrmsd+=(astdc*anum);totsh+=anum
-	    ##print('accepted stats: %2s %3d %6.3f %5.3f %5.3f %6.3f'%(at,anum,aoff,astd0,astdc,adAIC))
-	    newoffdct[at]=aoff
+        #now accumulate the validated data
+        atns=dct.keys()
+        accdct=dict(zip(atns,[[] for _ in atns]))
+        numol=0
+        iatns=self.shiftdct.keys();iatns.sort()
+        for i,at in iatns:#i is seq enumeration (starting from 0, but terminal allways excluded)
+          I=bbatns.index(at)
+          w=refined_weights[at]
+          ol=False
+          if i+1 in finaloutli:ol=True
+          elif (at,i-mini) in oldct:ol=True
+          if not ol:
+                accdct[at].append(dct[at][i])
+          else:numol+=1
+          if dataset != None:
+            dataset[at][self.bmrID].append(self.shiftdct[(i,at)]+[ol])
+            vals=dataset[at][self.bmrID][-1]
+            ##shout.write('%3d %2s %7.3f %5s %6.3f\n'%(i+1,at,vals[0],vals[1],dct[at][i]))
+            shout.write('%3d %1s %2s %7.3f %5s %6.3f\n'%(i+1,vals[1][2],at,vals[0],vals[1],dct[at][i]))
+        sumrmsd=0.0;totsh=0
+        newoffdct={}
+        for at in accdct:
+          I=bbatns.index(at)
+          w=refined_weights[at]
+          vals=accdct[at]
+          vals=array(vals)/w
+          anum=len(vals)
+          if anum==0:newoffdct[at]=0.0
+          else:
+            aoff=average(vals)
+            astd0=sqrt(average(array(vals)**2))
+            astdc=std(vals)
+            adAIC=log(astd0/astdc)*anum-1
+            if adAIC<minAIC or anum<4:
+              print('rejecting offset correction due to low adAIC:',at,aoff,adAIC,anum,self.bmrID,label,)
+              if lacsoffs != None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
+              else:print
+              astdc=astd0
+              aoff=0.0
+              shout.write('off %2s   0.0\n'%at)
+            else:
+              print('using offset correction:',at,aoff,adAIC,anum,self.bmrID,label,)
+              if lacsoffs != None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
+              else:print
+              shout.write('off %2s %7.3f\n'%(at,aoff*w))
+            sumrmsd+=(astdc*anum);totsh+=anum
+            ##print('accepted stats: %2s %3d %6.3f %5.3f %5.3f %6.3f'%(at,anum,aoff,astd0,astdc,adAIC))
+            newoffdct[at]=aoff
         compl=calc_complexity(cdfs3,self.bmrID,thr=cdfthr)
-	fullrmsd=average(allrmsd)
-	ps=self.phys_state
-	ps6=ps.strip("'")[:6]
-	fraczlt3=numzslt3*1.0/numzs
-	if totsh==0:avewrmsd,fracacc=9.99,0.0
-	else:avewrmsd,fracacc=sumrmsd/totsh,totsh/(0.0+totsh+numol)
-	allsh=sum(totnum)
-	ratsh=allsh*1.0/numzs
-	print('finalstats %5s %8s %6s %7.4f %6.4f %6.4f %4d %4d %4d %7.3f %3d %3d %4d %6.4f %6.4f %7.3f %8.5f'\)
-	 %(self.bmrID,label,ps6,avewrmsd,fullrmsd,fracacc,nres,totsh,numol,avc,numzs,numzslt3,allsh,fraczlt3,ratsh,stdcp,compl)##,
-	if dataset != None:
-	  if len(newoffdct)>6 or len(newoffdct)==6 and 'HB' not in newoffdct:
-	    print('testoff:',)
-	    for atn in ['CA','C','CB','N','H','HA']:print(newoffdct[atn],)
-	    print
-	  fracol3=len(outli3)*1.0/len(totnum>0)
-	  newfracol3=len(newoutli3)*1.0/len(totnum>0)
-	  if newfracol3<=0:lratf=0.0
-	  else:lratf=log(fracol3/newfracol3)
-	  print('fraccdfs3gt3 %5s %7.4f %7.4f %6.3f'%(self.bmrID,fracol3,newfracol3,lratf))
-	  if doplot:
-	    subplot(211)
-	    ##title('%5s %5.3f %5.3f '%(self.bmrID,1-fracol3,compl)+self.title[:60])
-	    title('Secondary chemical shifts and CheZOD Z-scores for %s'%self.bmrID)
-	  ##return cdfs3,newtotsgn/sqrt(totn3f[1:-1])*8.0,newtotsgn1/sqrt(totn3f[1:-1])*8.0
-	  return resids,cdfs3,newtotsgn/sqrt(totn3f[1:-1])*8.0,newtotsgn1/sqrt(totn3f[1:-1])*8.0,newtotsgn2/sqrt(totn3f[1:-1])*8.0
-	print
-	return avewrmsd,fracacc,newoffdct,cdfs3 #offsets from accepted stats
-	
+        fullrmsd=average(allrmsd)
+        ps=self.phys_state
+        ps6=ps.strip("'")[:6]
+        fraczlt3=numzslt3*1.0/numzs
+        if totsh==0:avewrmsd,fracacc=9.99,0.0
+        else:avewrmsd,fracacc=sumrmsd/totsh,totsh/(0.0+totsh+numol)
+        allsh=sum(totnum)
+        ratsh=allsh*1.0/numzs
+        print('finalstats %5s %8s %6s %7.4f %6.4f %6.4f %4d %4d %4d %7.3f %3d %3d %4d %6.4f %6.4f %7.3f %8.5f'\
+         %(self.bmrID,label,ps6,avewrmsd,fullrmsd,fracacc,nres,totsh,numol,avc,numzs,numzslt3,allsh,fraczlt3,ratsh,stdcp,compl)) ##,
+        if dataset != None:
+          if len(newoffdct)>6 or len(newoffdct)==6 and 'HB' not in newoffdct:
+            print('testoff:',)
+            for atn in ['CA','C','CB','N','H','HA']:print(newoffdct[atn],)
+            print
+          fracol3=len(outli3)*1.0/len(totnum>0)
+          newfracol3=len(newoutli3)*1.0/len(totnum>0)
+          if newfracol3<=0:lratf=0.0
+          else:lratf=log(fracol3/newfracol3)
+          print('fraccdfs3gt3 %5s %7.4f %7.4f %6.3f'%(self.bmrID,fracol3,newfracol3,lratf))
+          if doplot:
+            subplot(211)
+            ##title('%5s %5.3f %5.3f '%(self.bmrID,1-fracol3,compl)+self.title[:60])
+            title('Secondary chemical shifts and CheZOD Z-scores for %s'%self.bmrID)
+          ##return cdfs3,newtotsgn/sqrt(totn3f[1:-1])*8.0,newtotsgn1/sqrt(totn3f[1:-1])*8.0
+          return resids,cdfs3,newtotsgn/sqrt(totn3f[1:-1])*8.0,newtotsgn1/sqrt(totn3f[1:-1])*8.0,newtotsgn2/sqrt(totn3f[1:-1])*8.0
+        print
+        return avewrmsd,fracacc,newoffdct,cdfs3 #offsets from accepted stats
+        
     def savedata(self,cdfs3,pc1ws,pc2ws,pc3ws):
-	out=open('zscores%s.txt'%self.bmrID,'w')
-	s=self.seq
-	for i,x in enumerate(cdfs3):
-	  if x<99:#not nan
-	    I=i+self.mini
-	    aai=s[I]
-	    pci1=pc1ws[i]
-	    pci2=pc2ws[i]
-	    pci3=pc3ws[i]
-	    ##out.write('%s %3d %6.3f %6.3f %6.3f\n'%(aai,I+1,x,pci1,pci2))
-	    ##out.write('%s %3d %6.3f %6.3f %6.3f %6.3f\n'%(aai,I+1,x,pci1,pci2,pci3))
-	    out.write('%s %3d %6.3f\n'%(aai,I+1,x))
-	out.close()
+        out=open('zscores%s.txt'%self.bmrID,'w')
+        s=self.seq
+        for i,x in enumerate(cdfs3):
+          if x<99:#not nan
+            I=i+self.mini
+            aai=s[I]
+            pci1=pc1ws[i]
+            pci2=pc2ws[i]
+            pci3=pc3ws[i]
+            ##out.write('%s %3d %6.3f %6.3f %6.3f\n'%(aai,I+1,x,pci1,pci2))
+            ##out.write('%s %3d %6.3f %6.3f %6.3f %6.3f\n'%(aai,I+1,x,pci1,pci2,pci3))
+            out.write('%s %3d %6.3f\n'%(aai,I+1,x))
+        out.close()
 
 def calc_borders(c,ID,thr=3.0,lim=10,lim2=10,verb=False):
     a=''
     for x in c:
-	if x<thr:a+='0'
-	elif x>=thr:a+='1'
-	else:a+='-'
+        if x<thr:a+='0'
+        elif x>=thr:a+='1'
+        else:a+='-'
     ##a='00000000000000000111111100000----0000000111111111111111111111110000-0000-00000011111--1111111000'
     borders=[]
     prev='-'
     nancounts=[0]
     for i,x in enumerate(a):
       if x != prev and prev != '-' and x != '-':
-	borders.append(i)
-	nancounts.append(0)
+        borders.append(i)
+        nancounts.append(0)
       if x != '-':prev=x
       else:nancounts[-1]+=1
     N=len(a)
@@ -1823,10 +1824,10 @@ def calc_borders(c,ID,thr=3.0,lim=10,lim2=10,verb=False):
     for j,dj in enumerate(d):
       if j%2==ni and dj>lim:
        if dj-nancounts[j]>lim2:
-	if verb:print('idrs:',ID,j,dj,b0[j:j+2],dj-nancounts[j])
-	lst.append((dj,dj-nancounts[j],b0[j:j+2]))
-	if nancounts[j]>0:
-	  print('testidrs:',ID,lim,lim2,j,dj,b0[j:j+2],dj-nancounts[j])
+        if verb:print('idrs:',ID,j,dj,b0[j:j+2],dj-nancounts[j])
+        lst.append((dj,dj-nancounts[j],b0[j:j+2]))
+        if nancounts[j]>0:
+          print('testidrs:',ID,lim,lim2,j,dj,b0[j:j+2],dj-nancounts[j])
     return lst
 ##calc_borders([0,6],'test',lim=15,lim2=11,verb=True)
 ##1/0
@@ -1838,9 +1839,9 @@ def calc_complexity(c,ID,thr=3.0,ret=1,verb=False):
     else:
      a=''
      for x in c:
-	if x<thr:a+='0'
-	elif x>=thr:a+='1'
-	else:a+='-'
+        if x<thr:a+='0'
+        elif x>=thr:a+='1'
+        else:a+='-'
     ##a='000000000000000001111111000000000----000000000001111111111111111111111100000000000000111111111111'
     ##print('binstr:',a)
     ##print(a.count('-'))
@@ -1848,7 +1849,7 @@ def calc_complexity(c,ID,thr=3.0,ret=1,verb=False):
     prev='-'
     for i,x in enumerate(a):
       if x != prev and prev != '-' and x != '-':
-	borders.append(i)
+        borders.append(i)
       if x != '-':prev=x
     if verb:print(len(borders))
     if verb:print(borders)
@@ -1862,8 +1863,8 @@ def calc_complexity(c,ID,thr=3.0,ret=1,verb=False):
     ##if isinstance(c[0],str):nonnans=array([True]*len(a))
     if isinstance(c[0],str):avc=9.999
     else:
-	nonnans=c<10.0
-	avc=average(c[nonnans])
+        nonnans=c<10.0
+        avc=average(c[nonnans])
     if verb:print('entropy: %5s %7.4f %8.5f %6.3f'%(ID,entr,entr/N,avc))
     if ret==1:return entr/N
     else:return entr/N,d
@@ -1877,9 +1878,9 @@ def getCheZODandPCs(ID,usetcor=True,minAIC=6.0,doplot=True):
        totsh=sum(sg.moldba.counts.values())
        print(totsh,sg.seq)
        if sg.moldba.counts['P']>1 or 'U' in sg.seq:
-	raise SystemExit,'skipping DNA/RNA %s %s'%(ID,sg.title)
+        raise SystemExit('skipping DNA/RNA %s %s'%(ID,sg.title))
        if len(sg.seq)<5:## or totsh/len(sg.seq)<1.5:
-	raise SystemExit,'too short sequence or too few shifts %s %s'%(ID,sg.title)
+        raise SystemExit('too short sequence or too few shifts %s %s'%(ID,sg.title))
        dct=sg.cmp2pred1()
        totbbsh=sum([len(dct[at].keys()) for at in dct])
        print('total backbone shifts:',totbbsh)
@@ -1889,17 +1890,17 @@ def getCheZODandPCs(ID,usetcor=True,minAIC=6.0,doplot=True):
          off0=dict(zip(atns,[0.0 for _ in atns]))
          armsdc,frac,noffc,cdfs3c=sg.visresults(dct,False,offdct=offr,label='ofcor',minAIC=minAIC)
        else:
-	 print('warning: no running offset could be estimated',ID)
+         print('warning: no running offset could be estimated',ID)
          off0=dict(zip(bbatns,[0.0 for _ in bbatns]))
-	 armsdc=999.9;frac=0.0
+         armsdc=999.9;frac=0.0
        armsd0,fra0,noff0,cdfs30=sg.visresults(dct,False,offdct=off0,label='nocor',minAIC=minAIC)
        usefirst=armsd0/(0.01+fra0)<armsdc/(0.01+frac)
        av0=average(cdfs30[cdfs30<20.0])#to avoid nan
        if offr != None:
-	avc=average(cdfs3c[cdfs3c<20.0])
-	orusefirst=av0<avc
-	if usefirst != orusefirst:print(#'warning hard decission',usefirst,orusefirst)
-	print('decide',orusefirst,ID,armsd0,fra0,av0,armsdc,frac,avc)
+        avc=average(cdfs3c[cdfs3c<20.0])
+        orusefirst=av0<avc
+        if usefirst != orusefirst:print #'warning hard decission',usefirst,orusefirst)
+        print('decide',orusefirst,ID,armsd0,fra0,av0,armsdc,frac,avc)
        else:orusefirst=True
        if orusefirst: #was usefirst
          ##resids,cdfs3,pc1ws,pc2ws=sg.visresults(dct,True,dataset,offdct=noff0,label='nocornew',minAIC=minAIC)
@@ -1935,15 +1936,15 @@ def viscolentry(ID,pref='',delta=0,doreturn=False,pdbID='',returnpcs=False):
     ##rgbs=getseccol(array(pc1s),array(pc2s))
     ##C=array(rgbs).transpose()
     if doreturn:
-	return resi,C,zsco
-	C3=zeros((len(C),1,3))
-	C3[:,0,:]=C
-	imshow(rot90(C3),interpolation='none');show();1/0
+        return resi,C,zsco
+        C3=zeros((len(C),1,3))
+        C3[:,0,:]=C
+        imshow(rot90(C3),interpolation='none');show();1/0
     for i,ri in enumerate(resi):
-	zi=zsco[i]
-	coli=C[i]
-	##bari=bar(ri+0.5,zi,width=1.0,fc=coli,ec='none')
-	bari=bar(ri-0.5,zi,width=1.0,fc=coli,ec='none')
+        zi=zsco[i]
+        coli=C[i]
+        ##bari=bar(ri+0.5,zi,width=1.0,fc=coli,ec='none')
+        bari=bar(ri-0.5,zi,width=1.0,fc=coli,ec='none')
     title(ID+'  '+pdbID)
     return resi,pc1s,pc2s,C
     ##axis([-7,105,0,16])
@@ -1952,7 +1953,7 @@ def getramp(buf):
     dct={}
     for i in range(64):
       for j in range(4):
-        rgb=[string.atof(x)/255 for x in buf[i][4*j+1:4*j+4]]
+        rgb=[float(x)/255 for x in buf[i][4*j+1:4*j+4]]
         dct[i+j*64]=rgb
     return dct
 
@@ -1965,22 +1966,22 @@ def gencolpml(ID,pdbid='',delta=0):
     ##pmlfile=open('colCheZOD%s_%s.pml'%(ID,pdbid),'w')
     pmlfile=open('colCheZOD%s.pml'%ID,'w')
     for i,ri in enumerate(resi):
-	rgbi=coli[i]
-	##print(i,ri,rid,delta,rgbi,1/0)
-	##pmlfile.write('set_color coluser%d, '%ri)
-	pmlfile.write('set_color coluser%d, '%ri)
-	pmlfile.write('[%5.3f, %5.3f, %5.3f]\n'%tuple(rgbi))
-	##pmlfile.write('color coluser%d, resi %s and chain A and %s\n'%(ri,ri,pdbid))
-	pmlfile.write('color coluser%d, resi %s\n'%(ri,ri))
+        rgbi=coli[i]
+        ##print(i,ri,rid,delta,rgbi,1/0)
+        ##pmlfile.write('set_color coluser%d, '%ri)
+        pmlfile.write('set_color coluser%d, '%ri)
+        pmlfile.write('[%5.3f, %5.3f, %5.3f]\n'%tuple(rgbi))
+        ##pmlfile.write('color coluser%d, resi %s and chain A and %s\n'%(ri,ri,pdbid))
+        pmlfile.write('color coluser%d, resi %s\n'%(ri,ri))
     pmlfile.close()
 
 def visprobs(resi,probs):
     seccols='rgb'
     for i,ri in enumerate(resi):
-	probi=probs[i]
-	bottoms=[0.0,probi[0],probi[0]+probi[1]]
-	for n in range(3):
-	  bari=bar(ri-0.5,probi[n],bottom=bottoms[n],width=1.0,fc=seccols[n],ec='none')
+        probi=probs[i]
+        bottoms=[0.0,probi[0],probi[0]+probi[1]]
+        for n in range(3):
+          bari=bar(ri-0.5,probi[n],bottom=bottoms[n],width=1.0,fc=seccols[n],ec='none')
 
 def lineplot2dpcs2(resi,pc1s,pc2s,cols,ID):
    clf()
