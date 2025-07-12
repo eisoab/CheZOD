@@ -1292,6 +1292,10 @@ class ShiftGetter:
     def __init__(self,bmrID):
         self.bmrID=bmrID
         path=''
+        # allow filename bmr****.str as argument (should be in same dir)
+        # strip leading 'bmr' and trailing '.str'
+        if self.bmrID[:3]=='bmr': self.bmrID=self.bmrID[3:]
+        if self.bmrID[-4:]=='.str': self.bmrID=self.bmrID[:-4]
         bmrname=path+'bmr'+self.bmrID+'.str'
         print('opening bmr shift file',bmrname)
         try:open(bmrname)
