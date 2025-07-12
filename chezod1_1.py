@@ -740,7 +740,7 @@ def initcorrcomb():
     for lin in buf:
       atn=lin[0]
       if not atn in dct:dct[atn]={}
-      neipos=string.atoi(lin[1])
+      neipos=int(lin[1])
       centgroup=lin[2]
       neigroup= lin[3]
       key=(neipos,centgroup,neigroup)#(k,l,m)
@@ -783,7 +783,7 @@ def predPentShift(pent,atn):
 	key,combval=COMBCORRS[atn][segm]
         neipos,centgroup,neigroup=key#(k,l,m)
 	if centgroup==centgr and grstr[2+neipos]==neigroup:
-	 if (centgr,neigroup)<>('p','p') or pent[2] in 'ST':
+	 if (centgr,neigroup) != ('p','p') or pent[2] in 'ST':
 	  #pp comb only used when center is Ser or Thr!
 	  sh+=combval
     return sh
@@ -845,7 +845,7 @@ def read_csv_pkaoutput(seq,temperature,ion,name=None):
 	pkadct={}
 	for data in buf[lnum+1:]:
 	  reskey,pKa,diff,nH=data
-	  i=string.atoi(reskey[1:])-1
+	  i=int(reskey[1:])-1
 	  resi=reskey[0]
 	  pKaval=eval(pKa)
 	  nHval=eval(nH)
@@ -923,13 +923,13 @@ def getpredshifts(seq,temperature,pH,ion,usephcor=True,pkacsvfile=None,identifie
 		else:
 		  pent=seq[i-2]+trip+seq[i+2]
 	        shp=predPentShift(pent,at)
-		if shp<>None:
-	          if at<>'HB':shp+=gettempcorr(trip[1],at,tempdct,temperature)
+		if shp != None:
+	          if at != 'HB':shp+=gettempcorr(trip[1],at,tempdct,temperature)
 		  if at in phcorrs and i in phcorrs[at]:
 		     phdata=phcorrs[at][i]
 		     resi=phdata[0]
 		     ##assert resi==seq[i]
-		     if seq[i] in 'CDEHRKY' and resi<>seq[i]:
+		     if seq[i] in 'CDEHRKY' and resi != seq[i]:
 			print('WARNING: residue mismatch',resi,seq[i],i,phdata,at)
 		     phcorr=phdata[1]
 		     if abs(phcorr)<9.9:
@@ -1003,7 +1003,7 @@ class ShiftDict(dict):
         self.counts={'H':0,'C':0,'N':0,'P':0}#P is for DNA
 
     def writeTable(self,pdbID,pref='predictions_',col=0):
-	if pref<>None:
+	if pref != None:
 	  pdbID=string.join(pdbID).split('')##+'R'
 	  fil=open(pref+pdbID+'.out','w')
 	  fil.write(' NUM    RES      HA       H        N       CA        CB       C   \n')
@@ -1053,7 +1053,7 @@ class Parser:
             elif s=='noneblank':
                 if len(self.buffer[k])>0:
                     match=True
-            if s<>'' or stopstr<>None:
+            if s != '' or stopstr != None:
                 if positions==None:searchlist=range(len(self.buffer[k]))
                 else:searchlist=positions
                 for j in searchlist:
@@ -1356,10 +1356,10 @@ class ShiftGetter:
 	parser.start=0
         k=parser.search('_Entry_title')
 	self.title=string.join(buf[k+1],' ')
-	if buf[k+2][0]<>';':
+	if buf[k+2][0] != ';':
 	  self.title+=('  '+string.join(buf[k+2],' '))
         k2=parser.search('_Details')
-	if k2<>None and len(buf[k2-1])>1 and buf[k2-1][1]<>'.':
+	if k2 != None and len(buf[k2-1])>1 and buf[k2-1][1] != '.':
 	  print('details:',k2,buf[k2-1])
 	  self.title+=(' :'+string.join(buf[k2-1][1:],' '))
 	print(self.title)
@@ -1516,7 +1516,7 @@ save_
 		  if atp in shdct:
 		    shs.append(shdct[atp][0])
 		if len(shs)>0:sho=average(shs)
-	      if sho<>None:
+	      if sho != None:
 		if i==1:
 		  pent='n'+     trip+seq[i+2]
 		elif i==len(seq)-2:
@@ -1525,7 +1525,7 @@ save_
 		  pent=seq[i-2]+trip+seq[i+2]
 		##shp=refinedpred(paramdct[at],pent,at,tempdct,self.temperature)
 		shp=predshiftdct[(i+1,seq[i])][at]
-		if shp<>None:
+		if shp != None:
 		  self.shiftdct[(i,at)]=[sho,pent]
 		  diff=sho-shp
 		  if verb:print('diff is:',self.bmrID,i,seq[i],at,sho,shp,abs(diff),diff)
@@ -1566,7 +1566,7 @@ save_
 	  subtot=zeros(nres)
 	  subtot1=zeros(nres)
 	  subtot2=zeros(nres)
-	  if dataset<>None:dataset[at][self.bmrID]=[]
+	  if dataset != None:dataset[at][self.bmrID]=[]
 	  A=array(dct[at].items())
 	  totbbsh+=len(A)
 	  I=bbatns.index(at)
@@ -1574,7 +1574,7 @@ save_
 	  shw=A[:,1]/w
 	  off=average(shw)
 	  rms0=sqrt(average(shw**2))
-	  if offdct<>None:
+	  if offdct != None:
             shw-=offdct[at]#offset correction
             print('using predetermined offset correction',at,offdct[at],offdct[at]*w)
 	  ##shw-=off
@@ -1654,7 +1654,7 @@ save_
 	      print('rejecting offset correction due to low dAIC:',at,roff,dAIC,self.bmrID,label)
 	      offdct[at]=0.0
 	  return offdct #with the running offsets
-	if dataset<>None:
+	if dataset != None:
 	  csgns= newtotsgn/totn3f[1:-1]*10
 	  csgnsq=newtotsgn/sqrt(totn3f[1:-1])*10
 	  for I in range(len(resids)):
@@ -1714,7 +1714,7 @@ save_
 	  if not ol:
 		accdct[at].append(dct[at][i])
 	  else:numol+=1
-	  if dataset<>None:
+	  if dataset != None:
 	    dataset[at][self.bmrID].append(self.shiftdct[(i,at)]+[ol])
 	    vals=dataset[at][self.bmrID][-1]
 	    ##shout.write('%3d %2s %7.3f %5s %6.3f\n'%(i+1,at,vals[0],vals[1],dct[at][i]))
@@ -1735,14 +1735,14 @@ save_
 	    adAIC=log(astd0/astdc)*anum-1
 	    if adAIC<minAIC or anum<4:
 	      print('rejecting offset correction due to low adAIC:',at,aoff,adAIC,anum,self.bmrID,label,)
-	      if lacsoffs<>None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
+	      if lacsoffs != None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
 	      else:print
 	      astdc=astd0
 	      aoff=0.0
 	      shout.write('off %2s   0.0\n'%at)
 	    else:
 	      print('using offset correction:',at,aoff,adAIC,anum,self.bmrID,label,)
-	      if lacsoffs<>None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
+	      if lacsoffs != None and at in lacsoffs:print('LACS',lacsoffs[at],-aoff*w)
 	      else:print
 	      shout.write('off %2s %7.3f\n'%(at,aoff*w))
 	    sumrmsd+=(astdc*anum);totsh+=anum
@@ -1759,7 +1759,7 @@ save_
 	ratsh=allsh*1.0/numzs
 	print('finalstats %5s %8s %6s %7.4f %6.4f %6.4f %4d %4d %4d %7.3f %3d %3d %4d %6.4f %6.4f %7.3f %8.5f'\)
 	 %(self.bmrID,label,ps6,avewrmsd,fullrmsd,fracacc,nres,totsh,numol,avc,numzs,numzslt3,allsh,fraczlt3,ratsh,stdcp,compl)##,
-	if dataset<>None:
+	if dataset != None:
 	  if len(newoffdct)>6 or len(newoffdct)==6 and 'HB' not in newoffdct:
 	    print('testoff:',)
 	    for atn in ['CA','C','CB','N','H','HA']:print(newoffdct[atn],)
@@ -1804,14 +1804,14 @@ def calc_borders(c,ID,thr=3.0,lim=10,lim2=10,verb=False):
     prev='-'
     nancounts=[0]
     for i,x in enumerate(a):
-      if x<>prev and prev<>'-' and x<>'-':
+      if x != prev and prev != '-' and x != '-':
 	borders.append(i)
 	nancounts.append(0)
-      if x<>'-':prev=x
+      if x != '-':prev=x
       else:nancounts[-1]+=1
     N=len(a)
     first=a[0]
-    ni=first<>'0'
+    ni=first != '0'
     b0=array([0]+borders)
     b1=array(borders+[N])
     d=b1-b0
@@ -1847,9 +1847,9 @@ def calc_complexity(c,ID,thr=3.0,ret=1,verb=False):
     borders=[]
     prev='-'
     for i,x in enumerate(a):
-      if x<>prev and prev<>'-' and x<>'-':
+      if x != prev and prev != '-' and x != '-':
 	borders.append(i)
-      if x<>'-':prev=x
+      if x != '-':prev=x
     if verb:print(len(borders))
     if verb:print(borders)
     N=len(a)
@@ -1884,7 +1884,7 @@ def getCheZODandPCs(ID,usetcor=True,minAIC=6.0,doplot=True):
        totbbsh=sum([len(dct[at].keys()) for at in dct])
        print('total backbone shifts:',totbbsh)
        offr=sg.visresults(dct,False,minAIC=minAIC)
-       if offr<>None:
+       if offr != None:
          atns=offr.keys()
          off0=dict(zip(atns,[0.0 for _ in atns]))
          armsdc,frac,noffc,cdfs3c=sg.visresults(dct,False,offdct=offr,label='ofcor',minAIC=minAIC)
@@ -1895,10 +1895,10 @@ def getCheZODandPCs(ID,usetcor=True,minAIC=6.0,doplot=True):
        armsd0,fra0,noff0,cdfs30=sg.visresults(dct,False,offdct=off0,label='nocor',minAIC=minAIC)
        usefirst=armsd0/(0.01+fra0)<armsdc/(0.01+frac)
        av0=average(cdfs30[cdfs30<20.0])#to avoid nan
-       if offr<>None:
+       if offr != None:
 	avc=average(cdfs3c[cdfs3c<20.0])
 	orusefirst=av0<avc
-	if usefirst<>orusefirst:print(#'warning hard decission',usefirst,orusefirst)
+	if usefirst != orusefirst:print(#'warning hard decission',usefirst,orusefirst)
 	print('decide',orusefirst,ID,armsd0,fra0,av0,armsdc,frac,avc)
        else:orusefirst=True
        if orusefirst: #was usefirst
