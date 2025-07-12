@@ -15,9 +15,11 @@ bmrid specifies id for either (i) published BMRB id or (ii) a local provided NMR
 
    (i) The data will be downloaded automatically from the corresponding ftp site for the specified bmrid.
 
-   (ii) An NMR-STAR file (v2.1) must be placed in the running directory.
-
-The NMR-STAR file must contain chemical shifts (SCSs) and specify: “_Mol_residue_sequence", "assigned_chemical_shifts" and sample_conditions loop
+   (ii) An NMR-STAR file named bmr<bmrid>.str (v2.1) must be placed in the running directory. In the py3 version also the full filename bmr<bmrid>.str is allowed as argument 
+   
+The NMR-STAR file:
+- must contain chemical shifts (SCSs) and specify: “_Mol_residue_sequence", "assigned_chemical_shifts" and sample_conditions loop.
+- there needs to be an empty line between the last line of the shift list and following line with 'stop_' ( e.g. not present in bmr*.str output from cyana. )
 
 ## Output files:
 
